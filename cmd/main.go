@@ -19,7 +19,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	defer conn.Close(ctx)
+	defer func() {
+		err = conn.Close(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
-	dbService.CreateBasicTable(ctx, conn)
+	err = dbService.CreateBasicTable(ctx, conn)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
