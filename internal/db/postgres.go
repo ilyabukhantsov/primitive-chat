@@ -12,6 +12,7 @@ type Postgress struct {
 	db DB
 }
 
+// Connect will connect to database and return pgx.Conn connection.
 func (p *Postgress) Connect(ctx context.Context, connString string) (*pgx.Conn, error) {
 	conn, err := pgx.Connect(ctx, connString)
 	if err != nil {
@@ -24,6 +25,7 @@ func (p *Postgress) Connect(ctx context.Context, connString string) (*pgx.Conn, 
 	return conn, nil
 }
 
+// CreateBasicTable makes default table for DB.
 func (p *Postgress) CreateBasicTable(ctx context.Context, conn *pgx.Conn) (err error) {
 	createTableSQL := `
 	CREATE TABLE IF NOT EXISTS users (
