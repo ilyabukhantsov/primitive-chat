@@ -1,0 +1,17 @@
+# lefthook.yml
+pre-commit:
+  parallel: true
+  commands:
+    gofmt:
+      glob: "*.go"
+      run: go fmt ./...
+    linter:
+      glob: "*.go"
+      run: golangci-lint run --timeout=3m
+    tidy:
+      run: go mod tidy
+
+pre-push:
+  commands:
+    tests:
+      run: go test ./...
