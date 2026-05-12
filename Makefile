@@ -1,3 +1,13 @@
+BINARY_NAME=myapp
+
+# Default target: build the application
+buildc:
+	go build ./cmd/main.go
+
+# Run the application (builds it first)
+runc: build
+	go run ./cmd/main.go
+
 test:
 	go test ./...
 

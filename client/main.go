@@ -1,0 +1,46 @@
+package main
+
+import (
+	"context"
+	pb "github.com/pramonow/go-grpc-server-streaming-example/src/proto"
+	"io"
+	"log"
+
+	"google.golang.org/grpc"
+)
+
+func main() {
+
+	// dial server
+	conn, err := grpc.NewClient("localhost:50005", grpc.WithTransportCredentials(nil))
+	if err != nil {
+		log.Fatalf("can not connect with server %v", err)
+	}
+
+	// create stream
+	client := pb.NewStreamServiceClient(conn)
+	in := &pb.Request{Id: 1}
+	stream, err := client.FetchResponse(context.Background(), in)
+	if err != nil {
+		log.Fatalf("openn stream error %v", err)
+	}
+
+	done := make(chan bool)
+
+	go func() {
+		for {
+			resp, err := stream.Recv()
+			if err == io.EOF {
+				done <- true //close(done)
+				return
+			}
+			if err != nil {
+				log.Fatalf("can not receive %v", err)
+			}
+			log.Printf("Resp received: %s", resp.Result)
+		}
+	}()
+
+	<-done
+	log.Printf("finished")
+}
